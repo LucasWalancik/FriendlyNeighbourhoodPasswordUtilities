@@ -55,7 +55,7 @@ generate_password()
     fi
 
     password=$( echo "$password" | fold -w1 | shuf | tr -d '\n' )
-    echo "PASSWORD:" "$password"
+    echo "$password"
 }
 
 password_length=20
