@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# \/ DEFAULT CHARACTER POOLS
 LOWERCASE_LETTERS="abcdefghijklmnopqrstuvwxyz"
 UPPERCASE_LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUMBERS="0123456789"
 SPECIAL_CHARACTERS="!@#$%^&*()-_=+[]{}<>?"
 
-show_help()
-{
+show_help(){
+
     echo "Usage: pwdgenerator [OPTION]..."
-    echo "Generate a password"
+    echo "This program generates passwords for you."
     echo 
     echo "Mandatory arguments for long options are mandatory for short options too."
     printf "  %-30s %s\n" "-l, --length [X]" "Generate a password with length of X characters"
@@ -19,19 +18,30 @@ show_help()
     printf "  %-30s %s\n" "-s, --include-specials" "Include special characters in the password"
     printf "  %-30s %s\n" "-d, --disable-inclusion-check" "Disable inclusion check for selected character pools"
     printf "  %-30s %s\n" "-h, --help" "Display usage message"
+    printf "  %-30s %s\n" "-e, --examples" "Show examples"
     echo
-    echo "Examples: "
-    echo "./pwdgenerator.sh <- generates a 20 characters long password, includes lowercase letters, uppercase letters, numbers and special character. Ensures that at least one character from each pool is present in the password"
-    echo
-    echo "./pwdgenerator.sh -l 10 <- generates a 10 characters long password, includes lowercase letters, uppercase letters, numbers and special character. Ensures that at least one character from each pool is present in the password"
-    echo
-    echo "./pwdgenerator.sh -a <- generates a 20 characters long password, includes only lowercase letters."
-    echo
-    echo "./pwdgenerator.sh -a -n -d -l 2 <- generates a 2 characters long password. Includes lowercase letters and numbers. Does not ensure that a lowercase letter or a number is present in the password."
+    exit 0
 }
 
-generate_password()
-{
+show_examples(){
+
+    echo "Examples: "
+    echo "./pwdgenerator.sh"
+    echo "Generates a 20 characters long password, includes lowercase letters, uppercase letters, numbers and special character. Ensures that at least one character from each pool is present in the password"
+    echo
+    echo "./pwdgenerator.sh -l 10"
+    echo "Generates a 10 characters long password, includes lowercase letters, uppercase letters, numbers and special character. Ensures that at least one character from each pool is present in the password"
+    echo
+    echo "./pwdgenerator.sh -a"
+    echo "Generates a 20 characters long password, includes only lowercase letters."
+    echo
+    echo "./pwdgenerator.sh -a -n -d -l 2"
+    echo "Generates a 2 characters long password. Includes lowercase letters and numbers. Does not ensure that a lowercase letter or a number is present in the password."
+    exit 0
+}
+
+generate_password(){
+
     local password=""
 
     local password_characters_base=""
@@ -142,6 +152,10 @@ while [[ "$#" -gt 0 ]]; do
             ;;
         -h|--help)
             show_help
+            exit 0
+            ;;
+        -e|--examples)
+            show_examples
             exit 0
             ;;
         *)
