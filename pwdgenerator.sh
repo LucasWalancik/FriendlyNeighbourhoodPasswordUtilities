@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# \/ DEFAULT CHARACTER POOLS
 LOWERCASE_LETTERS="abcdefghijklmnopqrstuvwxyz"
 UPPERCASE_LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUMBERS="0123456789"
@@ -17,25 +18,34 @@ generate_password()
     local include_special_characters="$4"
 
     local password_length="$5"
+
+    local ensure_pools_are_in_the_password="$6"
     
-    if [[ "$include_lowercase_letters" == "true" ]]; then
-        password+="${LOWERCASE_LETTERS:RANDOM%${#LOWERCASE_LETTERS}:1}"
-        password_characters_base+="$LOWERCASE_LETTERS"
-    fi
+    if [[ "$ensure_pools_are_in_the_password" == "true" ]]; then
+        if [[ "$include_lowercase_letters" == "true" ]]; then
+            password+="${LOWERCASE_LETTERS:RANDOM%${#LOWERCASE_LETTERS}:1}"
+            password_characters_base+="$LOWERCASE_LETTERS"
+        fi
 
-    if [[ "$include_uppercase_letters" == "true" ]]; then
-        password+="${UPPERCASE_LETTERS:RANDOM%${#UPPERCASE_LETTERS}:1}"
-        password_characters_base+="$UPPERCASE_LETTERS"
-    fi
+        if [[ "$include_uppercase_letters" == "true" ]]; then
+            password+="${UPPERCASE_LETTERS:RANDOM%${#UPPERCASE_LETTERS}:1}"
+            password_characters_base+="$UPPERCASE_LETTERS"
+        fi
 
-    if [[ "$include_numbers" == "true" ]]; then
-        password+="${NUMBERS:RANDOM%${#NUMBERS}:1}"
-        password_characters_base+="$NUMBERS"
-    fi
+        if [[ "$include_numbers" == "true" ]]; then
+            password+="${NUMBERS:RANDOM%${#NUMBERS}:1}"
+            password_characters_base+="$NUMBERS"
+        fi
 
-    if [[ "$include_special_characters" == "true" ]]; then
-        password+="${SPECIAL_CHARACTERS:RANDOM%${#SPECIAL_CHARACTERS}:1}"
-        password_characters_base+="$SPECIAL_CHARACTERS"
+        if [[ "$include_special_characters" == "true" ]]; then
+            password+="${SPECIAL_CHARACTERS:RANDOM%${#SPECIAL_CHARACTERS}:1}"
+            password_characters_base+="$SPECIAL_CHARACTERS"
+        fi
+    else
+        [[ "$include_lowercase_letters" == "true" ]] && password_characters_base+="$LOWERCASE_LETTERS"
+        [[ "$include_uppercase_letters" == "true" ]] && password_characters_base+="$UPPERCASE_LETTERS"
+        [[ "$include_numbers" == "true" ]] && password_characters_base+="$NUMBERS"
+        [[ "$include_special_characters" == "true" ]] && password_characters_base+="$SPECIAL_CHARACTERS"
     fi
 
     local letters_remaining=$(( $password_length - ${#password} ))
@@ -52,7 +62,7 @@ include_lowercase=false
 include_uppercase=false
 include_numbers=false
 include_special=false
-options_included=0
+ensure_pools_inclusion=true
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -91,6 +101,10 @@ while [[ "$#" -gt 0 ]]; do
             include_special=true
             shift
             ;;
+        -o|--omit-ensure-pools-inclusion)
+            ensure_pools_inclusion=false
+            shift
+            ;;
         *)
             echo "This particular program does not expect this option: $1" >&2
             echo "For some help try running $0 --help or $0 -h"
@@ -107,5 +121,4 @@ if ! $include_lowercase && ! $include_uppercase && ! $include_numbers && ! $incl
     include_special=true
 fi
 
-generate_password $include_lowercase $include_uppercase $include_numbers $include_special $password_length
-# generate_password true true true true 11
+generate_password $include_lowercase $include_uppercase $include_numbers $include_special $password_length $ensure_pools_inclusion
