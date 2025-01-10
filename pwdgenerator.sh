@@ -40,10 +40,9 @@ generate_password()
 
     local letters_remaining=$(( $password_length - ${#password} ))
 
-    for ((i=1;i<=letters_remaining;i++)); do
-        character="${password_characters_base:RANDOM%${#password_characters_base}:1}"
-        password+="$character"
-    done
+    if [[ $letters_remaining -gt 0 ]]; then
+        password+=$(head -c 1024 /dev/urandom | tr -dc "$password_characters_base" | head -c "$letters_remaining")
+    fi
 
     echo "PASSWORD:" "$password"
 }
@@ -101,4 +100,12 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 
+if ! $include_lowercase && ! $include_uppercase && ! $include_numbers && ! $include_special; then
+    include_lowercase=true
+    include_uppercase=true
+    include_numbers=true
+    include_special=true
+fi
+
+generate_password $include_lowercase $include_uppercase $include_numbers $include_special $password_length
 # generate_password true true true true 11
