@@ -54,6 +54,7 @@ generate_password()
         password+=$(head -c 1024 /dev/urandom | tr -dc "$password_characters_base" | head -c "$letters_remaining")
     fi
 
+    password=$( echo "$password" | fold -w1 | shuf | tr -d '\n' )
     echo "PASSWORD:" "$password"
 }
 
